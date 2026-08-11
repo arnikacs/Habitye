@@ -1,0 +1,1232 @@
+/* =========================================================
+   HABITYE — COZY DREAMY UI
+   HTML + CSS ONLY
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
+
+:root {
+    --bg: #f8f4f7;
+    --surface: #fffdfd;
+    --surface-soft: #f4edf4;
+
+    --text: #403747;
+    --muted: #918795;
+
+    --primary: #9275a6;
+    --primary-dark: #76598b;
+    --accent: #d99aaa;
+
+    --border: #eadfe8;
+
+    --success: #77a98c;
+    --success-soft: #e3f1e8;
+
+    --shadow:
+        0 20px 60px rgba(78, 55, 82, 0.10);
+
+    --radius: 20px;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   SOFT BACKGROUND
+========================================================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    width: 420px;
+    height: 420px;
+
+    top: -180px;
+    left: -150px;
+
+    background: #eadff1;
+    border-radius: 50%;
+
+    filter: blur(70px);
+    opacity: 0.55;
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 380px;
+    height: 380px;
+
+    right: -150px;
+    bottom: -160px;
+
+    background: #f2dce4;
+    border-radius: 50%;
+
+    filter: blur(75px);
+    opacity: 0.5;
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+.login-body {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 25px;
+
+    overflow-x: hidden;
+}
+
+
+/* main login container */
+
+.login-page {
+    width: min(1100px, 100%);
+    min-height: 650px;
+
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+
+    background: rgba(255, 253, 253, 0.82);
+
+    border: 1px solid rgba(234, 223, 232, 0.9);
+
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow);
+
+    backdrop-filter: blur(20px);
+
+    animation: pageAppear 0.7s ease;
+}
+
+
+/* =========================================================
+   LOGIN LEFT
+========================================================= */
+
+.login-visual {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 48px;
+
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(221, 202, 230, 0.8),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(244, 215, 222, 0.8),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #faf5f8,
+            #f2edf5
+        );
+}
+
+
+/* brand */
+
+.brand {
+    position: relative;
+    z-index: 5;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 28px;
+
+    color: #574761;
+
+    letter-spacing: -0.5px;
+}
+
+.brand span {
+    color: var(--accent);
+}
+
+
+/* hero text */
+
+.visual-title {
+    position: relative;
+    z-index: 5;
+
+    margin-top: 100px;
+}
+
+.visual-title h1 {
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(42px, 5vw, 62px);
+
+    font-weight: 500;
+
+    line-height: 1.02;
+
+    letter-spacing: -2px;
+
+    color: #4e4254;
+}
+
+.visual-title h1 span {
+    color: #9275a6;
+}
+
+.visual-title p {
+    max-width: 380px;
+
+    margin-top: 18px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   CUTE FLOATING CHARACTER
+========================================================= */
+
+.cute-cat {
+    position: absolute;
+
+    right: 70px;
+    bottom: 115px;
+
+    width: 145px;
+    height: 120px;
+
+    animation: floatCat 4s ease-in-out infinite;
+}
+
+
+/* ears */
+
+.cat-ear {
+    position: absolute;
+
+    top: 5px;
+
+    width: 42px;
+    height: 42px;
+
+    background: #d6bddb;
+
+    border-radius: 14px 14px 5px 14px;
+}
+
+.cat-ear.left {
+    left: 25px;
+    transform: rotate(-25deg);
+}
+
+.cat-ear.right {
+    right: 25px;
+    transform: rotate(25deg);
+}
+
+
+/* face */
+
+.cat-face {
+    position: absolute;
+
+    left: 15px;
+    top: 22px;
+
+    width: 115px;
+    height: 90px;
+
+    background: #eee1ec;
+
+    border-radius: 48% 48% 45% 45%;
+
+    box-shadow:
+        0 15px 25px rgba(100, 75, 105, 0.12);
+}
+
+
+/* eyes */
+
+.cat-eye {
+    position: absolute;
+
+    top: 38px;
+
+    width: 8px;
+    height: 11px;
+
+    background: #55475a;
+
+    border-radius: 50%;
+}
+
+.cat-eye.left {
+    left: 34px;
+}
+
+.cat-eye.right {
+    right: 34px;
+}
+
+
+/* nose */
+
+.cat-nose {
+    position: absolute;
+
+    top: 54px;
+    left: 53px;
+
+    width: 9px;
+    height: 7px;
+
+    background: #c8899e;
+
+    border-radius: 50%;
+}
+
+
+/* cheeks */
+
+.cat-cheek {
+    position: absolute;
+
+    top: 57px;
+
+    width: 18px;
+    height: 8px;
+
+    background: rgba(217, 154, 170, 0.35);
+
+    border-radius: 50%;
+}
+
+.cat-cheek.left {
+    left: 17px;
+}
+
+.cat-cheek.right {
+    right: 17px;
+}
+
+
+/* tiny heart */
+
+.cat-heart {
+    position: absolute;
+
+    right: -5px;
+    top: -12px;
+
+    font-size: 24px;
+
+    color: #d99aaa;
+
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   DECORATIVE FLOATING CARDS
+========================================================= */
+
+.mini-note {
+    position: absolute;
+
+    padding: 13px 16px;
+
+    background: rgba(255, 252, 252, 0.72);
+
+    border: 1px solid rgba(229, 216, 226, 0.8);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 12px 30px rgba(75, 53, 79, 0.08);
+
+    backdrop-filter: blur(10px);
+
+    color: #776a7b;
+
+    font-size: 11px;
+
+    animation: slowFloat 5s ease-in-out infinite;
+}
+
+.note-one {
+    right: 55px;
+    top: 100px;
+
+    transform: rotate(4deg);
+}
+
+.note-two {
+    left: 55px;
+    bottom: 70px;
+
+    transform: rotate(-4deg);
+
+    animation-delay: 1.2s;
+}
+
+.mini-note strong {
+    display: block;
+
+    color: #66546e;
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 14px;
+
+    margin-bottom: 3px;
+}
+
+
+/* =========================================================
+   LOGIN RIGHT
+========================================================= */
+
+.login-section {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 45px;
+
+    background: rgba(255, 253, 253, 0.88);
+}
+
+
+/* card */
+
+.login-card {
+    width: 100%;
+    max-width: 350px;
+
+    animation: cardAppear 0.8s ease 0.15s both;
+}
+
+
+/* little icon */
+
+.flower-icon {
+    width: 45px;
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    background: #eee5f2;
+
+    border-radius: 50%;
+
+    font-size: 20px;
+
+    box-shadow:
+        0 8px 20px rgba(117, 89, 132, 0.08);
+}
+
+
+/* heading */
+
+.login-card h2 {
+    font-family: "Playfair Display", serif;
+
+    font-size: 32px;
+
+    font-weight: 500;
+
+    color: #4e4254;
+}
+
+.login-subtitle {
+    margin-top: 7px;
+    margin-bottom: 28px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* labels */
+
+.login-card form > label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #706574;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* input */
+
+.input-box {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    height: 49px;
+
+    margin-bottom: 17px;
+
+    padding: 0 14px;
+
+    background: #fff;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    transition: 0.25s ease;
+}
+
+.input-box:focus-within {
+    border-color: #b59bc2;
+
+    box-shadow:
+        0 0 0 4px rgba(181, 155, 194, 0.10);
+}
+
+.input-box > span {
+    color: #ae9aaa;
+
+    font-size: 14px;
+}
+
+.input-box input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: var(--text);
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 12px;
+}
+
+.input-box input::placeholder {
+    color: #bdb3be;
+}
+
+
+/* options */
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+
+    font-size: 10px;
+}
+
+.remember {
+    display: flex !important;
+    align-items: center;
+
+    gap: 6px;
+
+    margin: 0 !important;
+
+    font-size: 10px !important;
+
+    font-weight: 400 !important;
+
+    color: var(--muted) !important;
+}
+
+.remember input {
+    accent-color: var(--primary);
+}
+
+.login-options a {
+    color: var(--primary);
+
+    text-decoration: none;
+}
+
+
+/* main button */
+
+.login-btn {
+    width: 100%;
+    height: 49px;
+
+    border: none;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9275a6,
+            #b58ca4
+        );
+
+    color: white;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 24px rgba(145, 115, 156, 0.20);
+
+    transition: 0.25s ease;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 28px rgba(145, 115, 156, 0.26);
+}
+
+
+/* divider */
+
+.divider {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin: 22px 0;
+
+    color: #b6a8b5;
+
+    font-size: 10px;
+}
+
+.divider span {
+    flex: 1;
+
+    height: 1px;
+
+    background: var(--border);
+}
+
+
+/* Google */
+
+.google-btn {
+    width: 100%;
+    height: 46px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    background: #fff;
+
+    color: #5f5662;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+.google-btn:hover {
+    transform: translateY(-1px);
+
+    background: #faf7fa;
+
+    border-color: #d7c8d9;
+}
+
+
+/* signup */
+
+.signup {
+    margin-top: 25px;
+
+    text-align: center;
+}
+
+.signup p {
+    margin-bottom: 4px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+.signup a {
+    color: var(--primary);
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   THEME BUTTON
+========================================================= */
+
+.theme-button {
+    position: absolute;
+
+    top: 22px;
+    right: 22px;
+
+    z-index: 20;
+
+    width: 40px;
+    height: 40px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.7);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    transition: 0.25s ease;
+}
+
+.theme-button:hover {
+    transform: rotate(12deg) scale(1.05);
+}
+
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app-layout {
+    display: flex;
+
+    min-height: 100vh;
+}
+
+
+/* sidebar */
+
+.sidebar {
+    width: 245px;
+
+    padding: 28px 16px;
+
+    background: rgba(255, 253, 253, 0.78);
+
+    border-right: 1px solid var(--border);
+
+    backdrop-filter: blur(15px);
+
+    flex-shrink: 0;
+}
+
+.sidebar .brand {
+    margin-bottom: 35px;
+
+    padding: 0 14px;
+}
+
+.nav-links {
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 14px;
+
+    color: var(--muted);
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    border-radius: 14px;
+
+    transition: 0.25s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background: #eee6f2;
+
+    color: var(--primary);
+
+    transform: translateX(2px);
+}
+
+
+/* main */
+
+.main-content {
+    flex: 1;
+
+    padding: 40px;
+
+    max-width: 1250px;
+
+    margin: 0 auto;
+}
+
+
+/* header */
+
+.header {
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-family: "Playfair Display", serif;
+
+    font-size: 34px;
+
+    font-weight: 500;
+
+    color: #4e4254;
+
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.card {
+    background: rgba(255, 253, 253, 0.85);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 22px;
+
+    box-shadow:
+        0 12px 35px rgba(78, 55, 82, 0.06);
+}
+
+
+/* stats */
+
+.grid-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(190px, 1fr));
+
+    gap: 17px;
+
+    margin-bottom: 28px;
+}
+
+.stat-card {
+    position: relative;
+
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: "✦";
+
+    position: absolute;
+
+    right: 18px;
+    top: 16px;
+
+    color: #d7c3dc;
+
+    font-size: 18px;
+}
+
+.stat-card h3 {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+.stat-card .val {
+    margin-top: 8px;
+
+    color: var(--primary);
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 30px;
+}
+
+
+/* =========================================================
+   HABIT / GOAL ITEMS
+========================================================= */
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.item-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 20px;
+
+    background: rgba(255, 253, 253, 0.88);
+
+    border: 1px solid var(--border);
+
+    border-radius: 17px;
+
+    transition: 0.25s ease;
+}
+
+.item-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(78, 55, 82, 0.07);
+}
+
+.item-card h3 {
+    font-family: "Playfair Display", serif;
+
+    font-size: 17px;
+
+    font-weight: 500;
+
+    color: #514457;
+}
+
+.item-card p {
+    color: var(--muted);
+
+    font-size: 11px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+    border: none;
+
+    padding: 10px 17px;
+
+    border-radius: 13px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+
+    transform: translateY(-1px);
+}
+
+
+/* completed */
+
+.btn-done {
+    border: 1px solid #c8dfd0;
+
+    padding: 9px 14px;
+
+    border-radius: 12px;
+
+    background: var(--success-soft);
+
+    color: #5c8b6e;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.badge {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 30px;
+
+    background: #eee7f3;
+
+    color: var(--primary);
+
+    font-size: 10px;
+
+    font-weight: 600;
+}
+
+.badge-success {
+    background: var(--success-soft);
+
+    color: #5c8b6e;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes pageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes floatCat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
+@keyframes slowFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(2deg);
+    }
+
+    50% {
+        transform: translateY(-7px) rotate(0deg);
+    }
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .login-page {
+        grid-template-columns: 1fr;
+    }
+
+    .login-visual {
+        min-height: 470px;
+    }
+
+    .visual-title {
+        margin-top: 70px;
+    }
+
+    .login-section {
+        padding: 40px 25px;
+    }
+
+    .sidebar {
+        width: 190px;
+    }
+
+    .main-content {
+        padding: 28px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .login-body {
+        padding: 10px;
+    }
+
+    .login-page {
+        border-radius: 22px;
+    }
+
+    .login-visual {
+        min-height: 410px;
+
+        padding: 30px;
+    }
+
+    .visual-title h1 {
+        font-size: 40px;
+    }
+
+    .cute-cat {
+        right: 30px;
+        bottom: 75px;
+
+        transform: scale(0.8);
+    }
+
+    .note-one {
+        right: 25px;
+        top: 70px;
+    }
+
+    .note-two {
+        left: 25px;
+    }
+
+    .app-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .nav-links {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .main-content {
+        padding: 22px 16px;
+    }
+
+    .item-card {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+}
