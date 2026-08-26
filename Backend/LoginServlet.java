@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -33,7 +34,14 @@ public class LoginServlet extends HttpServlet {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                response.sendRedirect("dashboard.html");
+
+                int userId = rs.getInt("USER_ID");
+
+                HttpSession session = request.getSession();
+                session.setAttribute("USER_ID", userId);
+
+                response.sendRedirect("dashboard.jsp");
+
             } else {
                 response.sendRedirect("login.html?error=invalid");
             }
