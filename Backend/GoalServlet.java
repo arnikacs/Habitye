@@ -197,6 +197,7 @@ public class GoalServlet extends HttpServlet {
                     ps.setInt(2, userId);
 
                     ps.executeUpdate();
+                    AchievementServlet.checkAchievements(conn, userId);
                 }
 
                 response.sendRedirect("goals.jsp");

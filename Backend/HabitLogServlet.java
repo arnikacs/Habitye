@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/habit-log")
 public class HabitLogServlet extends HttpServlet {
@@ -52,7 +56,7 @@ public class HabitLogServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
 
             // ==========================================
-            // CHECK THAT HABIT BELONGS TO USER
+            // 1. VERIFY HABIT BELONGS TO CURRENT USER
             // ==========================================
 
             String verifySql =
@@ -79,7 +83,7 @@ public class HabitLogServlet extends HttpServlet {
 
 
             // ==========================================
-            // CHECK IF ALREADY COMPLETED TODAY
+            // 2. DON'T INSERT DUPLICATE TODAY
             // ==========================================
 
             String checkSql =
@@ -105,33 +109,212 @@ public class HabitLogServlet extends HttpServlet {
 
 
             // ==========================================
-            // INSERT TODAY'S LOG
+            // 3. INSERT TODAY'S HABIT LOG
             // ==========================================
 
-            String insertSql =
+            String insertLogSql =
                 "INSERT INTO HABIT_LOG " +
                 "(LOG_ID, HABIT_ID, LOG_DATE, COMPLETED) " +
                 "VALUES " +
                 "(HABIT_LOG_SEQ.NEXTVAL, ?, SYSDATE, 1)";
 
             try (PreparedStatement ps =
-                     conn.prepareStatement(insertSql)) {
+                     conn.prepareStatement(insertLogSql)) {
 
                 ps.setInt(1, habitId);
                 ps.executeUpdate();
             }
 
 
+            // ==========================================
+            // 4. LOAD ALL COMPLETED DATES FOR THIS HABIT
+            // ==========================================
+
+            List<LocalDate> completedDates = new ArrayList<>();
+
+            String datesSql =
+                "SELECT DISTINCT TRUNC(LOG_DATE) AS LOG_DAY " +
+                "FROM HABIT_LOG " +
+                "WHERE HABIT_ID = ? " +
+                "AND COMPLETED = 1 " +
+                "ORDER BY LOG_DAY DESC";
+
+            try (PreparedStatement datesPs =
+                     conn.prepareStatement(datesSql)) {
+
+                datesPs.setInt(1, habitId);
+
+                try (ResultSet rs =
+                         datesPs.executeQuery()) {
+
+                    while (rs.next()) {
+
+                        Date sqlDate =
+                            rs.getDate("LOG_DAY");
+
+                        if (sqlDate != null) {
+                            completedDates.add(
+                                sqlDate.toLocalDate()
+                            );
+                        }
+                    }
+                }
+            }
+
+
+            // ==========================================
+            // 5. CALCULATE CURRENT STREAK
+            // ==========================================
+
+            LocalDate today = LocalDate.now();
+
+            int currentStreak = 0;
+
+            LocalDate expectedDate = today;
+
+            for (LocalDate date : completedDates) {
+
+                if (date.equals(expectedDate)) {
+
+                    currentStreak++;
+
+                    expectedDate =
+                        expectedDate.minusDays(1);
+
+                } else if (date.isBefore(expectedDate)) {
+
+                    break;
+                }
+            }
+
+
+            // ==========================================
+            // 6. CALCULATE LONGEST STREAK
+            // ==========================================
+
+            int longestStreak = 0;
+            int runningStreak = 0;
+
+            LocalDate previousDate = null;
+
+            for (LocalDate date : completedDates) {
+
+                if (previousDate == null) {
+
+                    runningStreak = 1;
+
+                } else {
+
+                    long difference =
+                        java.time.temporal.ChronoUnit.DAYS.between(
+                            date,
+                            previousDate
+                        );
+
+                    if (difference == 1) {
+
+                        runningStreak++;
+
+                    } else {
+
+                        runningStreak = 1;
+                    }
+                }
+
+                if (runningStreak > longestStreak) {
+                    longestStreak = runningStreak;
+                }
+
+                previousDate = date;
+            }
+
+
+                        // ==========================================
+            // 7. INSERT OR UPDATE STREAKS
+            // ==========================================
+
+            String checkStreakSql =
+                "SELECT STREAK_ID " +
+                "FROM STREAKS " +
+                "WHERE HABIT_ID = ?";
+
+            Integer streakId = null;
+
+            try (PreparedStatement streakCheckPs =
+                     conn.prepareStatement(checkStreakSql)) {
+
+                streakCheckPs.setInt(1, habitId);
+
+                try (ResultSet rs =
+                         streakCheckPs.executeQuery()) {
+
+                    if (rs.next()) {
+                        streakId =
+                            rs.getInt("STREAK_ID");
+                    }
+                }
+            }
+
+
+            if (streakId == null) {
+
+                String insertStreakSql =
+                    "INSERT INTO STREAKS " +
+                    "(STREAK_ID, HABIT_ID, CURRENT_STREAK, " +
+                    "LONGEST_STREAK, LAST_COMPLETED_DATE) " +
+                    "VALUES " +
+                    "(STREAK_SEQ.NEXTVAL, ?, ?, ?, SYSDATE)";
+
+                try (PreparedStatement ps =
+                         conn.prepareStatement(insertStreakSql)) {
+
+                    ps.setInt(1, habitId);
+                    ps.setInt(2, currentStreak);
+                    ps.setInt(3, longestStreak);
+
+                    ps.executeUpdate();
+                }
+
+            } else {
+
+                String updateStreakSql =
+                    "UPDATE STREAKS " +
+                    "SET CURRENT_STREAK = ?, " +
+                    "LONGEST_STREAK = ?, " +
+                    "LAST_COMPLETED_DATE = SYSDATE " +
+                    "WHERE STREAK_ID = ?";
+
+                try (PreparedStatement ps =
+                         conn.prepareStatement(updateStreakSql)) {
+
+                    ps.setInt(1, currentStreak);
+                    ps.setInt(2, longestStreak);
+                    ps.setInt(3, streakId);
+
+                    ps.executeUpdate();
+                }
+            }
+
+
+            // ==========================================
+            // 8. CHECK ACHIEVEMENTS
+            // ==========================================
+
+            AchievementServlet.checkAchievements(conn, userId);
+
+
         } catch (Exception e) {
 
             e.printStackTrace();
-            response.sendRedirect("habits.jsp");
+
+            response.sendRedirect(
+                "habits.jsp?error=database"
+            );
+
             return;
         }
-
-
         // ==========================================
-        // RETURN TO HABITS PAGE
+        // 8. RETURN TO HABITS PAGE
         // ==========================================
 
         response.sendRedirect("habits.jsp");
