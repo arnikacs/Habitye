@@ -1,3 +1,5 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <%@ page import="java.sql.Connection" %>
 <%@ page import="java.sql.PreparedStatement" %>
 <%@ page import="java.sql.ResultSet" %>
@@ -201,9 +203,6 @@
 
 %>
 
-
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -405,26 +404,10 @@
             <div class="item-list">
 
 
-                <%
-
+<%
                     /*
-                     * IMPORTANT:
-                     *
-                     * MAX(L.COMPLETED) is used here.
-                     *
-                     * If a habit somehow has multiple logs
-                     * for today, the habit will still appear
-                     * only once.
-                     *
-                     * Example:
-                     *
-                     * Habit 1
-                     * 10 AM -> COMPLETED = 0
-                     *  5 PM -> COMPLETED = 1
-                     *
-                     * MAX = 1
-                     *
-                     * So the habit is shown as Done.
+                     * MAX(L.COMPLETED) prevents duplicate
+                     * display if multiple logs exist for today.
                      */
 
                     String habitsSql =
@@ -448,14 +431,20 @@
                         "ORDER BY H.HABIT_ID";
 
 
-                    try (Connection conn = DBConnection.getConnection();
-                         PreparedStatement ps = conn.prepareStatement(habitsSql)) {
+                    try (
+                        Connection conn =
+                            DBConnection.getConnection();
+
+                        PreparedStatement ps =
+                            conn.prepareStatement(habitsSql)
+                    ) {
 
 
                         ps.setInt(1, userId);
 
 
-                        try (ResultSet rs = ps.executeQuery()) {
+                        try (ResultSet rs =
+                                 ps.executeQuery()) {
 
 
                             boolean hasHabits = false;
@@ -486,7 +475,7 @@
                                 int completed =
                                     rs.getInt("COMPLETED");
 
-                %>
+%>
 
 
                 <!-- ==================================
@@ -516,57 +505,51 @@
                     <div>
 
 
-                        <%
-
+<%
                             if (completed == 1) {
+%>
 
-                        %>
+
+                        <!-- COMPLETED -->
+
+                        <button class="btn-done"
+                                type="button"
+                                disabled>
+
+                            ✓ Done
+
+                        </button>
 
 
-                            <!-- COMPLETED -->
+<%
+                            } else {
+%>
 
-                            <button class="btn-done"
-                                    type="button"
-                                    disabled>
 
-                                ✓ Done
+                        <!-- MARK DONE -->
+
+                        <form action="habit-log"
+                              method="post"
+                              style="margin:0;">
+
+                            <input type="hidden"
+                                   name="habitId"
+                                   value="<%= habitId %>">
+
+
+                            <button class="btn"
+                                    type="submit">
+
+                                Mark done
 
                             </button>
 
-
-                        <%
-
-                            } else {
-
-                        %>
+                        </form>
 
 
-                            <!-- MARK DONE -->
-
-                            <form action="habit-log"
-                                  method="post"
-                                  style="margin:0;">
-
-                                <input type="hidden"
-                                       name="habitId"
-                                       value="<%= habitId %>">
-
-
-                                <button class="btn"
-                                        type="submit">
-
-                                    Mark done
-
-                                </button>
-
-                            </form>
-
-
-                        <%
-
+<%
                             }
-
-                        %>
+%>
 
 
                     </div>
@@ -575,18 +558,12 @@
                 </div>
 
 
-                <%
-
+<%
                             }
 
 
-                            // ==================================
-                            // NO ACTIVE HABITS
-                            // ==================================
-
                             if (!hasHabits) {
-
-                %>
+%>
 
 
                 <div class="item-card">
@@ -607,8 +584,7 @@
                 </div>
 
 
-                <%
-
+<%
                             }
 
 
@@ -618,13 +594,8 @@
                     } catch (Exception e) {
 
                         e.printStackTrace();
+%>
 
-                %>
-
-
-                <!-- ==================================
-                     DATABASE ERROR
-                =================================== -->
 
                 <div class="item-card">
 
@@ -643,11 +614,9 @@
                 </div>
 
 
-                <%
-
+<%
                     }
-
-                %>
+%>
 
 
             </div>

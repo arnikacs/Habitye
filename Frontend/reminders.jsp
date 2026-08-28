@@ -6,687 +6,713 @@
 <%@ page import="com.Habitye.util.DBConnection" %>
 
 <%
-    Integer userId = (Integer) session.getAttribute("USER_ID");
+Integer userId = (Integer) session.getAttribute("USER_ID");
 
-    if (userId == null) {
-        response.sendRedirect("login.html");
-        return;
-    }
+
+if (userId == null) {
+    response.sendRedirect("login.html");
+    return;
+}
+
+
 %>
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-    <title>Habitye — Reminders</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet"
-          href="styles.css">
+<title>Habitye — Reminders</title>
 
-    <style>
-        .reminder-create {
-            margin-bottom: 28px;
-        }
+<link rel="stylesheet"
+      href="styles.css">
 
-        .reminder-create summary {
-            list-style: none;
+<style>
+    .reminder-create {
+        margin-bottom: 28px;
+    }
 
-            display: inline-flex;
-            align-items: center;
+    .reminder-create summary {
+        list-style: none;
 
-            padding: 10px 17px;
+        display: inline-flex;
+        align-items: center;
 
-            border-radius: 13px;
+        padding: 10px 17px;
 
-            background: var(--primary);
+        border-radius: 13px;
 
-            color: white;
+        background: var(--primary);
 
-            font-family: "DM Sans", sans-serif;
+        color: white;
 
-            font-size: 12px;
-            font-weight: 600;
+        font-family: "DM Sans", sans-serif;
 
-            cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
 
-            transition: 0.25s ease;
-        }
+        cursor: pointer;
 
-        .reminder-create summary::-webkit-details-marker {
-            display: none;
-        }
+        transition: 0.25s ease;
+    }
 
-        .reminder-create summary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
+    .reminder-create summary::-webkit-details-marker {
+        display: none;
+    }
 
-        .reminder-create[open] summary {
-            margin-bottom: 18px;
-        }
+    .reminder-create summary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+    }
 
-        .reminder-form-card {
-            background: rgba(255, 253, 253, 0.88);
+    .reminder-create[open] summary {
+        margin-bottom: 18px;
+    }
 
-            border: 1px solid var(--border);
+    .reminder-form-card {
+        background: rgba(255, 253, 253, 0.88);
 
-            border-radius: var(--radius);
+        border: 1px solid var(--border);
 
-            padding: 22px;
+        border-radius: var(--radius);
 
-            box-shadow:
-                0 12px 35px rgba(78, 55, 82, 0.06);
-        }
+        padding: 22px;
 
-        .reminder-form-title {
-            font-family: "Playfair Display", serif;
+        box-shadow:
+            0 12px 35px rgba(78, 55, 82, 0.06);
+    }
 
-            font-size: 24px;
+    .reminder-form-title {
+        font-family: "Playfair Display", serif;
 
-            font-weight: 500;
+        font-size: 24px;
 
-            color: #4e4254;
+        font-weight: 500;
 
-            margin-bottom: 5px;
-        }
+        color: #4e4254;
 
-        .reminder-form-subtitle {
-            color: var(--muted);
+        margin-bottom: 5px;
+    }
 
-            font-size: 12px;
+    .reminder-form-subtitle {
+        color: var(--muted);
 
-            margin-bottom: 20px;
-        }
+        font-size: 12px;
+
+        margin-bottom: 20px;
+    }
+
+    .reminder-form {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 15px;
+    }
+
+    .reminder-field {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+    }
+
+    .reminder-field.full {
+        grid-column: 1 / -1;
+    }
+
+    .reminder-field label {
+        color: #706574;
+
+        font-size: 11px;
+
+        font-weight: 600;
+    }
+
+    .reminder-field input,
+    .reminder-field select {
+        width: 100%;
+
+        height: 46px;
+
+        padding: 0 13px;
+
+        border: 1px solid var(--border);
+
+        border-radius: 13px;
+
+        background: #fff;
+
+        color: var(--text);
+
+        font-family: "DM Sans", sans-serif;
+
+        font-size: 12px;
+
+        outline: none;
+
+        transition: 0.25s ease;
+    }
+
+    .reminder-field input:focus,
+    .reminder-field select:focus {
+        border-color: #b59bc2;
+
+        box-shadow:
+            0 0 0 4px rgba(181, 155, 194, 0.10);
+    }
+
+    .reminder-field input[type="time"] {
+        cursor: pointer;
+    }
+
+    .reminder-submit {
+        border: none;
+
+        padding: 10px 17px;
+
+        border-radius: 13px;
+
+        background: var(--primary);
+
+        color: white;
+
+        font-family: "DM Sans", sans-serif;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+    }
+
+    .reminder-submit:hover {
+        background: var(--primary-dark);
+    }
+
+    .reminder-status {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+    }
+
+    @media (max-width: 650px) {
 
         .reminder-form {
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-
-            gap: 15px;
-        }
-
-        .reminder-field {
-            display: flex;
-
-            flex-direction: column;
-
-            gap: 7px;
+            grid-template-columns: 1fr;
         }
 
         .reminder-field.full {
-            grid-column: 1 / -1;
+            grid-column: auto;
         }
+    }
+</style>
 
-        .reminder-field label {
-            color: #706574;
-
-            font-size: 11px;
-
-            font-weight: 600;
-        }
-
-        .reminder-field input,
-        .reminder-field select {
-            width: 100%;
-
-            height: 46px;
-
-            padding: 0 13px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 13px;
-
-            background: #fff;
-
-            color: var(--text);
-
-            font-family: "DM Sans", sans-serif;
-
-            font-size: 12px;
-
-            outline: none;
-
-            transition: 0.25s ease;
-        }
-
-        .reminder-field input:focus,
-        .reminder-field select:focus {
-            border-color: #b59bc2;
-
-            box-shadow:
-                0 0 0 4px rgba(181, 155, 194, 0.10);
-        }
-
-        .reminder-field input[type="time"] {
-            cursor: pointer;
-        }
-
-        .reminder-submit {
-            border: none;
-
-            padding: 10px 17px;
-
-            border-radius: 13px;
-
-            background: var(--primary);
-
-            color: white;
-
-            font-family: "DM Sans", sans-serif;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-        }
-
-        .reminder-submit:hover {
-            background: var(--primary-dark);
-        }
-
-        .reminder-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        @media (max-width: 650px) {
-
-            .reminder-form {
-                grid-template-columns: 1fr;
-            }
-
-            .reminder-field.full {
-                grid-column: auto;
-            }
-        }
-    </style>
 
 </head>
 
-
 <body>
-
 
 <div class="app-layout">
 
 
-    <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="brand">
-            Habit<span>ye</span>
-        </div>
-
-
-        <ul class="nav-links">
-
-            <li>
-                <a href="dashboard.jsp">
-                    ✦ Dashboard
-                </a>
-            </li>
-
-            <li>
-                <a href="habits.jsp">
-                    ♡ Habits
-                </a>
-            </li>
-
-            <li>
-                <a href="goals.jsp">
-                    ◇ Goals
-                </a>
-            </li>
-
-            <li>
-                <a href="reminders.jsp"
-                   class="active">
-                    ◌ Reminders
-                </a>
-            </li>
-
-            <li>
-                <a href="achievements.html">
-                    ✿ Achievements
-                </a>
-            </li>
-
-            <li style="margin-top:25px;">
-                <a href="login.html">
-                    ↩ Logout
-                </a>
-            </li>
-
-        </ul>
-
-    </aside>
+    <div class="brand">
+        Habit<span>ye</span>
+    </div>
 
 
+    <ul class="nav-links">
 
-    <!-- MAIN -->
+        <li>
+            <a href="dashboard.jsp">
+                ✦ Dashboard
+            </a>
+        </li>
 
-    <main class="main-content">
+        <li>
+            <a href="habits.jsp">
+                ♡ Habits
+            </a>
+        </li>
 
+        <li>
+            <a href="goals.jsp">
+                ◇ Goals
+            </a>
+        </li>
 
-        <div class="header">
+        <li>
+            <a href="reminders.jsp"
+               class="active">
+                ◌ Reminders
+            </a>
+        </li>
 
-            <h1>
-                Gentle reminders ◌
-            </h1>
+        <li>
+            <a href="achievements.jsp">
+                ✿ Achievements
+            </a>
+        </li>
 
-            <p>
-                A little nudge when you need one.
-            </p>
+        <li style="margin-top:25px;">
 
-        </div>
+            <a href="logout">
+                ↩ Logout
+            </a>
+
+        </li>
+
+    </ul>
+
+</aside>
 
 
 
-        <!-- =================================================
-             ADD REMINDER
-        ================================================== -->
+<!-- MAIN -->
 
-        <details class="reminder-create">
+<main class="main-content">
 
 
-            <summary>
-                + Add Reminder
-            </summary>
+    <div class="header">
+
+        <h1>
+            Gentle reminders ◌
+        </h1>
+
+        <p>
+            A little nudge when you need one.
+        </p>
+
+    </div>
 
 
-            <div class="reminder-form-card">
+
+    <!-- ADD REMINDER -->
+
+    <details class="reminder-create">
 
 
-                <div class="reminder-form-title">
-                    Add a reminder
+        <summary>
+            + Add Reminder
+        </summary>
+
+
+        <div class="reminder-form-card">
+
+
+            <div class="reminder-form-title">
+                Add a reminder
+            </div>
+
+
+            <div class="reminder-form-subtitle">
+                Choose a habit and set a gentle reminder.
+            </div>
+
+
+            <form action="reminder"
+                  method="post"
+                  class="reminder-form">
+
+
+                <input type="hidden"
+                       name="action"
+                       value="add">
+
+
+                <!-- HABIT -->
+
+                <div class="reminder-field">
+
+                    <label for="habitId">
+                        Habit
+                    </label>
+
+                    <select id="habitId"
+                            name="habitId"
+                            required>
+
+                        <option value="">
+                            Select a habit
+                        </option>
+
+
+<%
+String habitSql =
+"SELECT HABIT_ID, HABIT_NAME " +
+"FROM HABITS " +
+"WHERE USER_ID = ? " +
+"AND STATUS = 1 " +
+"ORDER BY HABIT_NAME";
+
+
+                        try (
+                            Connection conn =
+                                DBConnection.getConnection();
+
+                            PreparedStatement ps =
+                                conn.prepareStatement(habitSql)
+                        ) {
+
+                            ps.setInt(1, userId);
+
+
+                            try (ResultSet rs =
+                                     ps.executeQuery()) {
+
+                                while (rs.next()) {
+
+
+%>
+
+
+                        <option value="<%= rs.getInt("HABIT_ID") %>">
+
+                            <%= rs.getString("HABIT_NAME") %>
+
+                        </option>
+
+
+<%
+}
+}
+
+
+                        } catch (Exception e) {
+
+                            e.printStackTrace();
+                        }
+
+
+%>
+
+
+                    </select>
+
                 </div>
 
 
-                <div class="reminder-form-subtitle">
-                    Choose a habit and set a gentle reminder.
+
+                <!-- TIME -->
+
+                <div class="reminder-field">
+
+                    <label for="reminderTime">
+                        Reminder Time
+                    </label>
+
+                    <input type="time"
+                           id="reminderTime"
+                           name="reminderTime"
+                           required>
+
                 </div>
 
 
-                <form action="reminder"
-                      method="post"
-                      class="reminder-form">
+
+                <!-- DAYS -->
+
+                <div class="reminder-field full">
+
+                    <label for="daysOfWeek">
+                        Days of Week
+                    </label>
+
+                    <select id="daysOfWeek"
+                            name="daysOfWeek"
+                            required>
+
+                        <option value="Every Day">
+                            Every Day
+                        </option>
+
+                        <option value="Weekdays">
+                            Weekdays
+                        </option>
+
+                        <option value="Weekends">
+                            Weekends
+                        </option>
+
+                        <option value="Sunday">
+                            Sunday
+                        </option>
+
+                        <option value="Monday">
+                            Monday
+                        </option>
+
+                        <option value="Tuesday">
+                            Tuesday
+                        </option>
+
+                        <option value="Wednesday">
+                            Wednesday
+                        </option>
+
+                        <option value="Thursday">
+                            Thursday
+                        </option>
+
+                        <option value="Friday">
+                            Friday
+                        </option>
+
+                        <option value="Saturday">
+                            Saturday
+                        </option>
+
+                    </select>
+
+                </div>
 
 
-                    <input type="hidden"
-                           name="action"
-                           value="add">
+
+                <!-- SUBMIT -->
+
+                <div class="reminder-field full">
+
+                    <button class="reminder-submit"
+                            type="submit">
+
+                        + Save Reminder
+
+                    </button>
+
+                </div>
 
 
-                    <!-- HABIT -->
+            </form>
 
-                    <div class="reminder-field">
 
-                        <label for="habitId">
-                            Habit
-                        </label>
+        </div>
 
-                        <select id="habitId"
-                                name="habitId"
-                                required>
+    </details>
 
-                            <option value="">
-                                Select a habit
-                            </option>
+
+
+    <!-- REMINDER LIST -->
+
+    <div class="item-list">
+
 
 <%
-                            String habitSql =
-                                "SELECT HABIT_ID, HABIT_NAME " +
-                                "FROM HABITS " +
-                                "WHERE USER_ID = ? " +
-                                "AND STATUS = 1 " +
-                                "ORDER BY HABIT_NAME";
+String reminderSql =
+"SELECT " +
+"R.REMINDER_ID, " +
+"R.REMINDER_TIME, " +
+"R.DAYS_OF_WEEK, " +
+"R.STATUS, " +
+"H.HABIT_NAME " +
+"FROM REMINDERS R " +
+"JOIN HABITS H " +
+"ON R.HABIT_ID = H.HABIT_ID " +
+"WHERE H.USER_ID = ? " +
+"ORDER BY R.REMINDER_TIME, H.HABIT_NAME";
 
 
-                            try (
-                                Connection conn =
-                                    DBConnection.getConnection();
+        try (
+            Connection conn =
+                DBConnection.getConnection();
 
-                                PreparedStatement ps =
-                                    conn.prepareStatement(habitSql)
-                            ) {
+            PreparedStatement ps =
+                conn.prepareStatement(reminderSql)
+        ) {
 
-                                ps.setInt(1, userId);
+            ps.setInt(1, userId);
 
 
-                                try (ResultSet rs =
-                                         ps.executeQuery()) {
+            try (ResultSet rs =
+                     ps.executeQuery()) {
 
-                                    while (rs.next()) {
+
+                boolean hasReminders = false;
+
+
+                while (rs.next()) {
+
+                    hasReminders = true;
+
+
+                    int reminderId =
+                        rs.getInt("REMINDER_ID");
+
+
+                    String habitName =
+                        rs.getString("HABIT_NAME");
+
+
+                    String reminderTime =
+                        rs.getString("REMINDER_TIME");
+
+
+                    String daysOfWeek =
+                        rs.getString("DAYS_OF_WEEK");
+
+
+                    int status =
+                        rs.getInt("STATUS");
+
+
 %>
 
-                            <option value="<%= rs.getInt("HABIT_ID") %>">
 
-                                <%= rs.getString("HABIT_NAME") %>
-
-                            </option>
-
-<%
-                                    }
-                                }
-
-                            } catch (Exception e) {
-
-                                e.printStackTrace();
-                            }
-%>
-
-                        </select>
-
-                    </div>
+        <div class="item-card">
 
 
+            <div>
 
-                    <!-- TIME -->
-
-                    <div class="reminder-field">
-
-                        <label for="reminderTime">
-                            Reminder Time
-                        </label>
-
-                        <input type="time"
-                               id="reminderTime"
-                               name="reminderTime"
-                               required>
-
-                    </div>
+                <h3>
+                    <%= habitName %>
+                </h3>
 
 
+                <p>
 
-                    <!-- DAYS -->
+                    <%= daysOfWeek %>
+                    ·
+                    <%= reminderTime %>
 
-                    <div class="reminder-field full">
+                </p>
 
-                        <label for="daysOfWeek">
-                            Days of Week
-                        </label>
-
-                        <select id="daysOfWeek"
-                                name="daysOfWeek"
-                                required>
-
-                            <option value="Every Day">
-                                Every Day
-                            </option>
-
-                            <option value="Weekdays">
-                                Weekdays
-                            </option>
-
-                            <option value="Weekends">
-                                Weekends
-                            </option>
-
-                            <option value="Sunday">
-                                Sunday
-                            </option>
-
-                            <option value="Monday">
-                                Monday
-                            </option>
-
-                            <option value="Tuesday">
-                                Tuesday
-                            </option>
-
-                            <option value="Wednesday">
-                                Wednesday
-                            </option>
-
-                            <option value="Thursday">
-                                Thursday
-                            </option>
-
-                            <option value="Friday">
-                                Friday
-                            </option>
-
-                            <option value="Saturday">
-                                Saturday
-                            </option>
-
-                        </select>
-
-                    </div>
+            </div>
 
 
+            <div class="reminder-status">
 
-                    <div class="reminder-field full">
 
-                        <button class="reminder-submit"
+                <% if (status == 1) { %>
+
+
+                    <span class="badge badge-success">
+                        Active
+                    </span>
+
+
+                    <form action="reminder"
+                          method="post"
+                          style="margin:0;">
+
+                        <input type="hidden"
+                               name="action"
+                               value="deactivate">
+
+                        <input type="hidden"
+                               name="reminderId"
+                               value="<%= reminderId %>">
+
+                        <button class="btn-done"
                                 type="submit">
 
-                            + Save Reminder
+                            Pause
 
                         </button>
 
-                    </div>
+                    </form>
 
 
-                </form>
+                <% } else { %>
 
 
-            </div>
-
-        </details>
-
-
-
-        <!-- =================================================
-             REMINDERS LIST
-        ================================================== -->
-
-        <div class="item-list">
+                    <span class="badge">
+                        Paused
+                    </span>
 
 
-<%
-            String reminderSql =
-                "SELECT " +
-                "R.REMINDER_ID, " +
-                "R.REMINDER_TIME, " +
-                "R.DAYS_OF_WEEK, " +
-                "R.STATUS, " +
-                "H.HABIT_NAME " +
-                "FROM REMINDERS R " +
-                "JOIN HABITS H " +
-                "ON R.HABIT_ID = H.HABIT_ID " +
-                "WHERE H.USER_ID = ? " +
-                "ORDER BY R.REMINDER_TIME, H.HABIT_NAME";
-
-
-            try (
-                Connection conn =
-                    DBConnection.getConnection();
-
-                PreparedStatement ps =
-                    conn.prepareStatement(reminderSql)
-            ) {
-
-                ps.setInt(1, userId);
-
-
-                try (ResultSet rs =
-                         ps.executeQuery()) {
-
-
-                    boolean hasReminders = false;
-
-
-                    while (rs.next()) {
-
-                        hasReminders = true;
-
-
-                        int reminderId =
-                            rs.getInt("REMINDER_ID");
-
-
-                        String habitName =
-                            rs.getString("HABIT_NAME");
-
-
-                        String reminderTime =
-                            rs.getString("REMINDER_TIME");
-
-
-                        String daysOfWeek =
-                            rs.getString("DAYS_OF_WEEK");
-
-
-                        int status =
-                            rs.getInt("STATUS");
-
-%>
-
-
-            <div class="item-card">
-
-
-                <div>
-
-                    <h3>
-                        <%= habitName %>
-                    </h3>
-
-
-                    <p>
-
-                        <%= daysOfWeek %>
-                        ·
-                        <%= reminderTime %>
-
-                    </p>
-
-                </div>
-
-
-                <div class="reminder-status">
-
-                    <% if (status == 1) { %>
-
-                        <span class="badge badge-success">
-                            Active
-                        </span>
-
-
-                        <form action="reminder"
-                              method="post"
-                              style="margin:0;">
-
-                            <input type="hidden"
-                                   name="action"
-                                   value="deactivate">
-
-                            <input type="hidden"
-                                   name="reminderId"
-                                   value="<%= reminderId %>">
-
-                            <button class="btn-done"
-                                    type="submit">
-
-                                Pause
-
-                            </button>
-
-                        </form>
-
-
-                    <% } else { %>
-
-                        <span class="badge">
-                            Paused
-                        </span>
-
-                    <% } %>
-
-                </div>
+                <% } %>
 
 
             </div>
-
-
-<%
-                    }
-
-
-                    if (!hasReminders) {
-%>
-
-
-            <div class="item-card">
-
-                <div>
-
-                    <h3>
-                        No reminders yet ◌
-                    </h3>
-
-                    <p>
-                        Add a reminder for one of your active habits.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-<%
-                    }
-
-                }
-
-            } catch (Exception e) {
-
-                e.printStackTrace();
-%>
-
-
-            <div class="item-card">
-
-                <div>
-
-                    <h3>
-                        Unable to load reminders.
-                    </h3>
-
-                    <p>
-                        Please check the Tomcat console.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-<%
-            }
-%>
 
 
         </div>
 
 
-    </main>
+<%
+}
+
+
+                if (!hasReminders) {
+
+
+%>
+
+
+        <div class="item-card">
+
+            <div>
+
+                <h3>
+                    No reminders yet ◌
+                </h3>
+
+                <p>
+                    Add a reminder for one of your active habits.
+                </p>
+
+            </div>
+
+        </div>
+
+
+<%
+}
+
+
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+
+%>
+
+
+        <div class="item-card">
+
+            <div>
+
+                <h3>
+                    Unable to load reminders.
+                </h3>
+
+                <p>
+                    Please check the Tomcat console.
+                </p>
+
+            </div>
+
+        </div>
+
+
+<%
+}
+%>
+
+
+    </div>
+
+
+</main>
+
 
 </div>
-
 
 </body>
 
