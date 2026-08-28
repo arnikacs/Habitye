@@ -251,28 +251,28 @@
 
 
             <li>
-                <a href="habits.html">
+                <a href="habits.jsp">
                     ♡ Habits
                 </a>
             </li>
 
 
             <li>
-                <a href="goals.html">
+                <a href="goals.jsp">
                     ◇ Goals
                 </a>
             </li>
 
 
             <li>
-                <a href="reminders.html">
+                <a href="reminders.jsp">
                     ◌ Reminders
                 </a>
             </li>
 
 
             <li>
-                <a href="achievements.html">
+                <a href="achievements.jsp">
                     ✿ Achievements
                 </a>
             </li>
@@ -280,7 +280,7 @@
 
             <li style="margin-top: 25px;">
 
-                <a href="login.html">
+                <a href="logout">
                     ↩ Logout
                 </a>
 
